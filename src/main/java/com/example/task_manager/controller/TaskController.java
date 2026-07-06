@@ -2,6 +2,7 @@ package com.example.task_manager.controller;
 
 import com.example.task_manager.entity.Task;
 import com.example.task_manager.repository.TaskRepository;
+import com.example.task_manager.service.TaskService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,50 +14,52 @@ import java.util.List;
 @RequestMapping("/api/v1/tasks")
 public class TaskController {
 
-    private final TaskRepository taskRepository;
+    private final TaskService taskService;
 
     @Autowired
-    public TaskController(TaskRepository taskRepository) {
-        this.taskRepository = taskRepository;
+    public TaskController(TaskService taskService) {
+        this.taskService = taskService;
     }
 
     @GetMapping
     public List<Task> getAllTasks() {
-        return taskRepository.findAll();
+        return taskService.getAllTasks();
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<Task> getTaskById(@PathVariable Long id) {
-        return taskRepository.findById(id)
+        return taskService.getTaskById(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
 
     @PostMapping
     public ResponseEntity<Task> createTask(@RequestBody Task task) {
-        Task newTask = taskRepository.save(task);
+        Task newTask = taskService.saveTask(task);
         return ResponseEntity.status(HttpStatus.CREATED).body(newTask);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<Task> updateTask(@PathVariable Long id, @RequestBody Task updatedTask) {
-        return taskRepository.findById(id)
-                .map(task -> {
-                    task.setTitle(updatedTask.getTitle());
-                    task.setDescription(updatedTask.getDescription());
-                    task.setCompleted(updatedTask.getCompleted());
-                    Task newTask = taskRepository.save(task);
-                    return ResponseEntity.ok(newTask);
-                }).orElse(ResponseEntity.notFound().build());
+        return taskService.updateTask(id, updatedTask)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteTask(@PathVariable Long id) {
-        return taskRepository.findById(id)
-                .map(task -> {
-                    taskRepository.delete(task);
-                    return ResponseEntity.ok().<Void>build();
-                })
-                .orElse(ResponseEntity.notFound().build());
+        return taskService.deleteTaskById(id)?
+                ResponseEntity.ok().build():
+                ResponseEntity.notFound().build();
+    }
+
+    @GetMapping("/completed/{status}")
+    public List<Task> getTasksByStatus(@PathVariable boolean status) {
+        return taskService.getCompletedTasks(status);
+    }
+
+    @GetMapping("/search")
+    public List<Task> searchTasksByTitle(@RequestParam String title) {
+        return taskService.searchTasks(title);
     }
 }
