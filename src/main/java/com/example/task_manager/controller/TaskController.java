@@ -2,6 +2,7 @@ package com.example.task_manager.controller;
 
 import com.example.task_manager.entity.Task;
 import com.example.task_manager.service.TaskService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -31,13 +32,13 @@ public class TaskController {
     }
 
     @PostMapping
-    public ResponseEntity<Task> createTask(@RequestBody Task task) {
+    public ResponseEntity<Task> createTask(@Valid @RequestBody Task task) {
         Task newTask = taskService.saveTask(task);
         return ResponseEntity.status(HttpStatus.CREATED).body(newTask);
     }
 
     @PutMapping("/{id}")
-    public Task updateTask(@PathVariable Long id, @RequestBody Task updatedTask) {
+    public Task updateTask(@PathVariable Long id,@Valid @RequestBody Task updatedTask) {
         return taskService.updateTask(id, updatedTask);
     }
 
