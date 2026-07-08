@@ -20,3 +20,27 @@ spring:
     properties:
       hibernate:
         format_sql: true
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,env,logger,beans,mappings
+      base-path: /actuator
+  endpoint:
+    health:
+      show-details: always
+  info:
+    env:
+      enabled: true
+
+info:
+  app:
+    description: A simple task management application built with Spring Boot.
+    version: 1.0.0
+    author: Emil Akbarov
+
+app:
+  name: Task Manager
+  version: 1.0.0
+  max-tasks-per-page: 10
