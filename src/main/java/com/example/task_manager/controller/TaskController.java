@@ -36,6 +36,59 @@ public class TaskController {
 //        return taskService.getAllTasks();
 //    }
 
+    @GetMapping("/search")
+    public ResponseEntity<Map<String,Object>> searchTasks(
+            @RequestParam(required = false) String title,
+            @RequestParam(required = false) Boolean completed,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "createdAt") String sortBy,
+            @RequestParam(defaultValue = "DESC") String order
+            ){
+        Sort sort = order.equalsIgnoreCase("ASC") ?
+                Sort.by(sortBy).ascending() :
+                Sort.by(sortBy).descending();
+
+        Pageable pageable = PageRequest.of(page, size, sort);
+
+        Page<Task> tasks;
+
+        if(title != null && completed != null){
+            tasks = taskService.searchTasksByTitleAndCompletion(
+                    title,completed,pageable
+            );
+        }else if(title != null){
+            tasks = taskService.searchTasksByTitle(
+                    title,pageable
+            );
+        } else  if(completed != null){
+            tasks = taskService.getTasksByCompletion(
+                    completed,pageable
+            );
+        }else {
+            tasks = taskService.getAllTasks(pageable);
+        }
+
+        List<TaskResponse> taskResponseList = tasks.getContent()
+                .stream()
+                .map(task -> new TaskResponse(
+                        task.getId(),
+                        task.getTitle(),
+                        task.getDescription(),
+                        task.getCompleted(),
+                        task.getCreatedAt()
+                )).toList();
+        Map<String, Object> response = new HashMap<>();
+        response.put("tasks", taskResponseList);
+        response.put("currentPage", tasks.getNumber());
+        response.put("totalItems", tasks.getTotalElements());
+        response.put("totalPages", tasks.getTotalPages());
+        response.put("hasNext", tasks.hasNext());
+        response.put("hasPrevious", tasks.hasPrevious());
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
     @GetMapping
     public ResponseEntity<Map<String, Object>> getAllTasks(
             @RequestParam(defaultValue = "0") int page,
@@ -95,8 +148,8 @@ public class TaskController {
         return taskService.getCompletedTasks(status);
     }
 
-    @GetMapping("/search")
+    @GetMapping("/search-by-title")
     public List<Task> searchTasksByTitle(@RequestParam String title) {
-        return taskService.searchTasks(title);
+        return taskService.searchTasksByTitle(title);
     }
 }

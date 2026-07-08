@@ -26,6 +26,14 @@ public class TaskService {
         this.taskRepository = taskRepository;
     }
 
+    public Page<Task> searchTasksByTitle(String title, Pageable pageable) {
+        return taskRepository.findByTitleContainingIgnoreCase(title, pageable);
+    }
+
+    public Page<Task> searchTasksByTitleAndCompletion(String title, Boolean completed, Pageable pageable) {
+        return taskRepository.findByTitleContainingAndCompleted(title, completed, pageable);
+    }
+
     public List<Task> getAllTasks() {
         return taskRepository.findAll();
     }
@@ -68,7 +76,11 @@ public class TaskService {
         return tasks.map(TaskMapper::toResponse);
     }
 
-    public List<Task> searchTasks(String title) {
+    public List<Task> searchTasksByTitle(String title) {
         return taskRepository.findByTitleContainingIgnoreCase(title);
+    }
+
+    public Page<Task> getTasksByCompletion(Boolean completed, Pageable pageable) {
+        return taskRepository.findTasksByCompletionStatus(completed, pageable);
     }
 }
