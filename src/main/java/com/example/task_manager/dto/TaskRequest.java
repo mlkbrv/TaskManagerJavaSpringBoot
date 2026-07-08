@@ -12,7 +12,9 @@ public record TaskRequest(
         @Size(max = 500, message = "Description cannot be longer than 500 characters")
         String description,
         
-        Boolean completed
+        Boolean completed,
+
+        Long categoryId
 
 ) {
 }

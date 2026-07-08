@@ -33,6 +33,10 @@ public class Task {
     @Column(name = "created_at", nullable = false)
     private LocalDate createdAt;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "category_id")
+    private Category category;
+
     @PrePersist
     protected void onCreate() {
         this.createdAt = LocalDate.from(LocalDateTime.now());
