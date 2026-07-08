@@ -2,6 +2,8 @@ package com.example.task_manager.repository;
 
 
 import com.example.task_manager.entity.Task;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -12,10 +14,17 @@ import java.util.List;
 @Repository
 public interface TaskRepository extends JpaRepository<Task, Long> {
 
-    List<Task> findByCompleted(Boolean completed);
+    List<Task> findByCompleted(boolean completed);
 
     List<Task> findByTitleContainingIgnoreCase(String title);
 
     @Query("SELECT t from Task t where t.completed=:completed")
     List<Task> findTasksByCompletionStatus(@Param("completed") boolean completed);
+
+    Page<Task> findByCompleted(boolean completed, Pageable pageable);
+
+    Page<Task> findByTitleContainingIgnoreCase(String title, Pageable pageable);
+
+    @Query("SELECT t from Task t where t.completed=:completed")
+    Page<Task> findTasksByCompletionStatus(@Param("completed") boolean completed, Pageable pageable);
 }

@@ -15,13 +15,13 @@ public class TaskMapper {
                 .build();
     }
 
-    public TaskResponse toResponse(Task task) {
+    public static TaskResponse toResponse(Task task) {
         return TaskResponse.builder()
                 .id(task.getId())
                 .title(task.getTitle())
                 .description(task.getDescription())
                 .completed(task.getCompleted())
-                .createdAt(task.getCreatedAt().atStartOfDay())
+                .createdAt(task.getCreatedAt())
                 .build();
     }
 

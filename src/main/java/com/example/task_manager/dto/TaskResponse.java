@@ -2,7 +2,7 @@ package com.example.task_manager.dto;
 
 import lombok.Builder;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 @Builder
 public record TaskResponse(
@@ -10,6 +10,6 @@ public record TaskResponse(
         String title,
         String description,
         Boolean completed,
-        LocalDateTime createdAt
+        LocalDate createdAt
 ) {
 }

@@ -8,6 +8,8 @@ import com.example.task_manager.mapper.TaskMapper;
 import com.example.task_manager.repository.TaskRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -26,6 +28,10 @@ public class TaskService {
 
     public List<Task> getAllTasks() {
         return taskRepository.findAll();
+    }
+
+    public Page<Task> getAllTasks(Pageable pageable) {
+        return taskRepository.findAll(pageable);
     }
 
     public TaskResponse getTaskById(Long id) {
@@ -55,6 +61,11 @@ public class TaskService {
 
     public List<Task> getCompletedTasks(boolean completed) {
         return taskRepository.findByCompleted(completed);
+    }
+
+    public Page<TaskResponse> getCompletedTasks(boolean completed, Pageable pageable) {
+        final Page<Task> tasks = taskRepository.findByCompleted(completed, pageable);
+        return tasks.map(TaskMapper::toResponse);
     }
 
     public List<Task> searchTasks(String title) {
