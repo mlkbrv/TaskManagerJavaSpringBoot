@@ -1,5 +1,7 @@
 package com.example.task_manager.controller;
 
+import com.example.task_manager.dto.TaskRequest;
+import com.example.task_manager.dto.TaskResponse;
 import com.example.task_manager.entity.Task;
 import com.example.task_manager.service.TaskService;
 import jakarta.validation.Valid;
@@ -27,18 +29,18 @@ public class TaskController {
     }
 
     @GetMapping("/{id}")
-    public Task getTaskById(@PathVariable Long id) {
+    public TaskResponse getTaskById(@PathVariable Long id) {
         return taskService.getTaskById(id);
     }
 
     @PostMapping
-    public ResponseEntity<Task> createTask(@Valid @RequestBody Task task) {
-        Task newTask = taskService.saveTask(task);
+    public ResponseEntity<TaskResponse> createTask(@Valid @RequestBody TaskRequest task) {
+        TaskResponse newTask = taskService.saveTask(task);
         return ResponseEntity.status(HttpStatus.CREATED).body(newTask);
     }
 
     @PutMapping("/{id}")
-    public Task updateTask(@PathVariable Long id,@Valid @RequestBody Task updatedTask) {
+    public TaskResponse updateTask(@PathVariable Long id,@Valid @RequestBody TaskRequest updatedTask) {
         return taskService.updateTask(id, updatedTask);
     }
 
